@@ -9,7 +9,7 @@ import sys
 from firebase import firebase
 from time import sleep
 
-firebase = firebase.FirebaseApplication("https://seudatabase.firebaseio.com/", None)
+firebase = firebase.FirebaseApplication("https://seuBD.firebaseio.com/", None)
 
 try:
     import Tkinter as tk
@@ -106,7 +106,7 @@ class mapeador8266:
         self.Resetar.configure(highlightbackground="#d9d9d9")
         self.Resetar.configure(highlightcolor="black")
         self.Resetar.configure(pady="0")
-        self.Resetar.configure(text='''Resetar''')
+        self.Resetar.configure(text='''Resetar''', command=self.reiniciar)
 
         self.Origem = tk.Label(top)
         self.Origem.place(relx=0.017, rely=0.0, height=20, width=34)
@@ -153,6 +153,11 @@ class mapeador8266:
         self.limparMapa.configure(highlightcolor="black")
         self.limparMapa.configure(pady="0")
         self.limparMapa.configure(text='''Limpar Mapa''', command=self.apagar)
+
+        self.var = 0.0
+        self.escala = tk.Scale(from_=1, to=10)
+        self.escala.place(relx=0.92,rely=0.3,height=150)
+        #self.escala.pack()
     
     def comecar(self):
         '''for i in range(10):
@@ -164,12 +169,26 @@ class mapeador8266:
             sleep(2)
             '''
         self.result = firebase.get('/', '')
-        self.xis = self.result['XIS']
-        self.ips = self.result['IPS']
-        self.Canvas1.create_oval(self.xis,self.ips,self.xis+6,self.ips+6,outline="blue",width=1,fill="blue")
+        self.xis = (250+self.result['XIS'])/self.escala.get()
+        self.ips = (250+self.result['IPS'])/self.escala.get()
+        self.xObs = (250+self.result['X obs'])/self.escala.get()
+        self.yObs = (250+self.result['Y obs'])/self.escala.get()
+        self.Canvas1.create_oval(self.xis,self.ips,self.xis+6,self.ips+6,outline="#8ccef3",width=1,fill="#8ccef3")
+        self.Canvas1.create_oval(self.xObs,self.yObs,self.xObs+4,self.yObs+4,outline="#f3b18c",width=1,fill="#f3b18c")
 
     def apagar(self):
         self.Canvas1.delete("all")
+
+    def reiniciar(self):
+        self.dados = {'IPS': 250, 'X obs': 0, 'XIS': 250, 'Y obs': 0, 'angulo': 0, 'dist': 0, 'obstaculo': 0}
+        #self.resultado = firebase.post('/', self.dados)
+        firebase.put('/','IPS',250)
+        firebase.put('/','X obs',0)
+        firebase.put('/','XIS',250)
+        firebase.put('/','Y obs',0)
+        firebase.put('/','angulo',0)
+        firebase.put('/','dist',0)
+        firebase.put('/','obstaculo',0)
 
 
 
