@@ -193,8 +193,10 @@ class mapeador8266:
             '''
             self.xis = (250+self.result[0])/self.escala.get()
             self.ips = (250+self.result[1])/self.escala.get()
-            self.xObs = (250+item+10)/self.escala.get()
-            self.yObs = (250+item+20)/self.escala.get()
+            self.xObs = (250+self.result[item+10])/self.escala.get()
+            self.yObs = (250+self.result[item+20])/self.escala.get()
+            print(self.xObs)
+            print(self.yObs)
             self.Canvas1.create_oval(self.xis,self.ips,self.xis+6,self.ips+6,outline="#8ccef3",width=1,fill="#8ccef3")
             self.Canvas1.create_oval(self.xObs,self.yObs,self.xObs+4,self.yObs+4,outline="#f3b18c",width=1,fill="#f3b18c")
             #sleep(5)
