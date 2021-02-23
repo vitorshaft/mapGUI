@@ -173,6 +173,11 @@ class mapeador8266:
         self.ciclo = True
         #self.escala.pack()
     
+    def grade(self):
+        for c in range(5):
+            self.Canvas1.create_line(c*100,0,c*100,500,width=1,fill="#FFFFFF")
+            self.Canvas1.create_line(0,c*100,500,c*100,width=1,fill="#FFFFFF")
+
     def comecar(self):
         '''for i in range(10):
             self.result = firebase.get('/', '')
@@ -204,6 +209,7 @@ class mapeador8266:
 
     def apagar(self):
         self.Canvas1.delete("all")
+        self.grade()
 
     def reiniciar(self):
         self.ciclo = True
