@@ -86,6 +86,7 @@ class mapeador8266:
 
         self.Canvas1 = tk.Canvas(top)
         self.Canvas1.place(relx=0.075, rely=0.0, relheight=0.863, relwidth=0.833)
+        self.grade()
 
         self.Canvas1.configure(background="#4b4b4b")
         self.Canvas1.configure(borderwidth="2")
@@ -196,12 +197,12 @@ class mapeador8266:
             self.xObs = (250+self.result['X obs'])/self.escala.get()
             self.yObs = (250+self.result['Y obs'])/self.escala.get()
             '''
-            self.xis = (250+self.result[0])/self.escala.get()
-            self.ips = (250+self.result[1])/self.escala.get()
-            self.xObs = (250+self.result[item+10])/self.escala.get()
-            self.yObs = (250+self.result[item+20])/self.escala.get()
-            print(self.xObs)
-            print(self.yObs)
+            self.xis = (self.result[0])/self.escala.get()
+            self.ips = (self.result[1])/self.escala.get()
+            self.xObs = (self.result[0]+self.result[item+10])/self.escala.get()
+            self.yObs = (self.result[1]+self.result[item+20])/self.escala.get()
+            print((item+10,item+20,self.xObs,self.yObs))
+            #print(self.yObs)
             self.Canvas1.create_oval(self.xis,self.ips,self.xis+6,self.ips+6,outline="#8ccef3",width=1,fill="#8ccef3")
             self.Canvas1.create_oval(self.xObs,self.yObs,self.xObs+4,self.yObs+4,outline="#f3b18c",width=1,fill="#f3b18c")
             #sleep(5)
