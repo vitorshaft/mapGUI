@@ -81,7 +81,7 @@ class Principal:
 
         #self.Canvas1.pack()
         self.Canvas1.delete("all")
-        self.img = PhotoImage(file="C:/Users/vitor/Documents/Python/mapGUI/mapa.png")
+        self.img = PhotoImage(file="C:/Users/duart/Documents/Python Scripts/mapGUI/mapa.png")
         self.Canvas1.create_image(0,0, anchor='nw', image=self.img)
         #mainloop()
 
@@ -136,11 +136,18 @@ class Principal:
     def gravar(self, fonte):
       	#imagem = Image.new("RGB",(width,height),black)
       	arquivo = "desenho.png"
-      	x = root.winfo_rootx()+fonte.winfo_x()
-      	y = root.winfo_rooty()+fonte.winfo_y()
+      	'''
+      	x = root.winfo_rootx()#+fonte.winfo_x()
+      	y = root.winfo_rooty()#+fonte.winfo_y()
       	x1 = x+fonte.winfo_width()
       	y1 = y+fonte.winfo_height()
-      	#ImageGrab.grab().crop((x,y,x1,y1)).save(arquivo)
+      	'''
+      	x = 200
+      	y = 200
+      	x1 = 400
+      	y1 = 400
+      	
+      	ImageGrab.grab().crop((x,y,x1,y1)).save(arquivo)
       	ImageGrab.grab().save(arquivo)	#esta tirando print da tela
 
 
