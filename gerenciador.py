@@ -6,6 +6,8 @@
 #    Mar 01, 2021 11:12:38 AM -03  platform: Windows NT
 
 import sys
+import cv2 as cv
+import busca_a_estrela as bae
 from PIL import Image, ImageDraw, ImageGrab
 width = 500
 height = 500
@@ -79,12 +81,6 @@ class Principal:
         self.Canvas1.configure(selectbackground="blue")
         self.Canvas1.configure(selectforeground="white")
 
-        #self.Canvas1.pack()
-        self.Canvas1.delete("all")
-        self.img = PhotoImage(file="C:/Users/duart/Documents/Python Scripts/mapGUI/mapa.png")
-        self.Canvas1.create_image(0,0, anchor='nw', image=self.img)
-        #mainloop()
-
         self.Desenhar = tk.Button(top)
         self.Desenhar.place(relx=0.05, rely=0.033, height=24, width=77)
         self.Desenhar.configure(activebackground="#ececec")
@@ -107,7 +103,7 @@ class Principal:
         self.Abrir.configure(highlightbackground="#d9d9d9")
         self.Abrir.configure(highlightcolor="black")
         self.Abrir.configure(pady="0")
-        self.Abrir.configure(text='''Abrir''')
+        self.Abrir.configure(text='''Abrir''', command=self.abrir)
 
         self.Salvar = tk.Button(top)
         self.Salvar.place(relx=0.333, rely=0.033, height=24, width=67)
@@ -131,7 +127,7 @@ class Principal:
         self.Rota.configure(highlightbackground="#d9d9d9")
         self.Rota.configure(highlightcolor="black")
         self.Rota.configure(pady="0")
-        self.Rota.configure(text='''Gerar rota''')
+        self.Rota.configure(text='''Gerar rota''', command=self.gerar("C:/Users/duart/Documents/Python Scripts/mapGUI/mapa.png"))
 
     def gravar(self, fonte):
       	#imagem = Image.new("RGB",(width,height),black)
@@ -149,8 +145,32 @@ class Principal:
       	
       	ImageGrab.grab().crop((x,y,x1,y1)).save(arquivo)
       	ImageGrab.grab().save(arquivo)	#esta tirando print da tela
+    def abrir(self):
+        self.Canvas1.delete("all")
+        self.img = PhotoImage(file="C:/Users/duart/Documents/Python Scripts/mapGUI/mapa.png")
+        self.Canvas1.create_image(0,0, anchor='nw', image=self.img)
 
-
+    def gerar(self,labirinto):
+        im_gray = cv.imread(labirinto, cv.IMREAD_GRAYSCALE)
+        (thresh, im_bw) = cv.threshold(im_gray, 128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
+        thresh = 127
+        im_bw = cv.threshold(im_gray, thresh, 255, cv.THRESH_BINARY)[1]
+        mapaPB = im_bw
+        self.rota = bae.busca(mapaPB,1,[0,0],[450,450])
+        coord = []
+        for linha in rota:
+            for x in range(20):
+                try:
+                    #print("coluna: "+str(linha.index(x)))
+                    #print("linha: "+str(rota.index(linha))+", passo: "+str(x))
+                    coord.append([linha.index(x),rota.index(linha)])
+                except:
+                    pass
+        for item in coord:
+            self.Canvas1.create_oval(item[0],item[1],item[0]+4,item[1]+4,outline="#8ccef3",width=1,fill="#8ccef3")
+        a = open('rota.txt','w')
+        a.write(coord)
+        a.close()
 
 if __name__ == '__main__':
     vp_start_gui()

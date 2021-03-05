@@ -13,6 +13,8 @@ Senao, criar no novo com o pai como o no atual e atualizar posicao do no.
     Se "sim", mudar o pai do no para o no atual e recalcular g e f daquele no.
 4. Programa principal:
 '''
+
+#1.
 #import cv2
 import numpy as np
 
@@ -27,6 +29,7 @@ class No:
     def __igual__(self, outro): #verifica se um no e igual a outro
         return(self.pos == outro.pos)
 
+#2.
 def retornar_rota(no_atual,labirinto):
     rota = []
     nLinhas, nColunas = np.shape(labirinto) #cria matriz nas dimensoes definidas no labirinto
@@ -45,6 +48,7 @@ def retornar_rota(no_atual,labirinto):
         vInicio+=1
     return(result)
 
+#3.
     #Retorna uma lista de tuplas do inicio ao objetivo no labirinto informados
 def busca(labirinto, custo, inicio, fim):
     #inicializa nos de inicio e objetivo com 0 em g, h e f
@@ -62,69 +66,76 @@ def busca(labirinto, custo, inicio, fim):
     max_iter = (len(labirinto)//2) **10 #metade do tamanho do labirinto elevado a 10
 
     #busca nos 4 nos vizinhos (acima, a esq, abaixo e a dir)
-    mover = [[-1,0],    #pra cima
-            [0,-1],     #pra esq
-            [1,0],      #pra baixo
-            [0,1]]      #pra dir
+    mover = [[-1,0],[0,-1],[1,0],[0,1]]
 
     #usa o no atual para comparar todos os f e selecionar o menor. Checa iteracao maxima
     #descobre quantas linhas e colunas o labirinto tem
     nLinhas, nColunas = np.shape(labirinto)
 
     while(len(vizinhos_nv)>0):
+        #cada vez que um no e visitado em vizinhos_nv incrementar n de iteracoes
         iteracoes += 1
 
+        #selecionar o no atual
         no_atual = vizinhos_nv[0]
         indAtual = 0
         for ind, item in enumerate(vizinhos_nv):
             if item.f < no_atual.f:
                 no_atual = item
                 indAtual = ind
+        #se chegar nesse ponto, retorna a rota de forma que nao tenha solucao ou o custo e muito alto
         if iteracoes > max_iter:
             print("alcancado limite de iteracoes!")
             return(retornar_rota(no_atual,labirinto))
-
+        
+        #muda o no atual de vizinhos_nv para visitados
         vizinhos_nv.pop(indAtual)
         visitados.append(no_atual)
 
+        #testa se o objetivo foi atingido. Se foi, retorna a rota
         if no_atual == no_obj:
             return(retornar_rota(no_atual,labirinto))
 
-    filhos = []
+        #gera os nos-filhos de todos os nos adjacentes
+        filhos = []
 
-    for nova in mover:
-        posNo = (no_atual.pos[0] + nova[0], no_atual.pos[1] + nova[1])
+        for nova in mover:
+            posNo = (no_atual.pos[0] + nova[0], no_atual.pos[1] + nova[1])
 
-        if(posNo[0] > (nLinhas-1) or
-            posNo[0] < 0 or
-            posNo[1] > (nColunas-1) or
-            posNo[1] < 0):
-            continue
-        if labirinto[posNo[0]][posNo[1]] != 0:
-            continue
-        novoNo = No(no_atual, posNo)
+            if(posNo[0] > (nLinhas-1) or
+                posNo[0] < 0 or
+                posNo[1] > (nColunas-1) or
+                posNo[1] < 0):
+                continue
+            
+            #garante que o "terreno seja caminhavel"
+            if labirinto[posNo[0]][posNo[1]] != 0:
+                continue
+            
+            novoNo = No(no_atual, posNo)
 
-        filhos.append(novoNo)
+            filhos.append(novoNo)
 
-    for filho in filhos:
-        if len([filho_vis for filho_vis in visitados if filho_vis == filho]) > 0:
-            continue
+        for filho in filhos:
+            #no-filho esta na lista de visitados (busca na lista de visitados inteira)
+            if len([filho_vis for filho_vis in visitados if filho_vis == filho]) > 0:
+                continue
 
-        filho.g = no_atual.g + custo
-        filho.h = (((filho.pos[0] - no_obj.pos[0])**2)+
-                    ((filho.pos[1] - no_obj.pos[1])**2))
-        filho.f = filho.g + filho.h
+            filho.g = no_atual.g + custo
+            filho.h = (((filho.pos[0] - no_obj.pos[0])**2)+
+                        ((filho.pos[1] - no_obj.pos[1])**2))
+            filho.f = filho.g + filho.h
 
-        if len([i for i in vizinhos_nv if filho == i and filho.g > i.g]) > 0:
-            continue
-        vizinhos_nv.append(filho)
+            if len([i for i in vizinhos_nv if filho == i and filho.g > i.g]) > 0:
+                continue
+            vizinhos_nv.append(filho)
 
 if __name__ == '__main__':
     labirinto = [[0,1,0,0,0,0],
-                [0,0,0,0,0,0],
-                [0,1,0,1,0,0],
-                [0,1,0,0,1,0],
-                [0,0,0,0,1,0]]
+                      [0,0,0,0,0,0],
+                      [0,1,0,1,0,0],
+                      [0,1,0,0,1,0],
+                      [0,0,0,0,1,0]]
 
     inicio = [0,0]
     obj = [4,5]
@@ -132,3 +143,13 @@ if __name__ == '__main__':
 
     rota = busca(labirinto,custo,inicio,obj)
     print(rota)
+    coord = []
+    for linha in rota:
+        for x in range(20):
+            try:
+                print("coluna: "+str(linha.index(x)))
+                print("linha: "+str(rota.index(linha))+", passo: "+str(x))
+                coord.append([linha.index(x),rota.index(linha)])
+            except:
+                pass
+    print(coord)
