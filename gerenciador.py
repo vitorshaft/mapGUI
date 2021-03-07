@@ -72,6 +72,8 @@ class Principal:
         top.title("Gerenciador de mapas")
         top.configure(background="#d9d9d9")
 
+        self.endMapa = "C:/Users/vitor/Documents/Python/mapGUI/mapa.png"
+
         self.Canvas1 = tk.Canvas(top)
         self.Canvas1.place(relx=0.05, rely=0.1, relheight=0.852, relwidth=0.9)
         self.Canvas1.configure(background="#4d4d4d")
@@ -127,7 +129,7 @@ class Principal:
         self.Rota.configure(highlightbackground="#d9d9d9")
         self.Rota.configure(highlightcolor="black")
         self.Rota.configure(pady="0")
-        self.Rota.configure(text='''Gerar rota''', command=self.gerar("C:/Users/duart/Documents/Python Scripts/mapGUI/mapa.png"))
+        self.Rota.configure(text='''Gerar rota''', command=self.gerar(self.endMapa))
 
     def gravar(self, fonte):
       	#imagem = Image.new("RGB",(width,height),black)
@@ -147,30 +149,31 @@ class Principal:
       	ImageGrab.grab().save(arquivo)	#esta tirando print da tela
     def abrir(self):
         self.Canvas1.delete("all")
-        self.img = PhotoImage(file="C:/Users/duart/Documents/Python Scripts/mapGUI/mapa.png")
+        self.img = PhotoImage(file=self.endMapa)
         self.Canvas1.create_image(0,0, anchor='nw', image=self.img)
 
     def gerar(self,labirinto):
-        im_gray = cv.imread(labirinto, cv.IMREAD_GRAYSCALE)
-        (thresh, im_bw) = cv.threshold(im_gray, 128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
-        thresh = 127
-        im_bw = cv.threshold(im_gray, thresh, 255, cv.THRESH_BINARY)[1]
-        mapaPB = im_bw
-        self.rota = bae.busca(mapaPB,1,[0,0],[450,450])
-        coord = []
-        for linha in rota:
-            for x in range(20):
-                try:
-                    #print("coluna: "+str(linha.index(x)))
-                    #print("linha: "+str(rota.index(linha))+", passo: "+str(x))
-                    coord.append([linha.index(x),rota.index(linha)])
-                except:
-                    pass
-        for item in coord:
-            self.Canvas1.create_oval(item[0],item[1],item[0]+4,item[1]+4,outline="#8ccef3",width=1,fill="#8ccef3")
-        a = open('rota.txt','w')
-        a.write(coord)
-        a.close()
+    	try:
+    		im_gray = cv.imread(labirinto, cv.IMREAD_GRAYSCALE)
+    		(thresh, im_bw) = cv.threshold(im_gray, 128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
+    		thresh = 127
+    		im_bw = cv.threshold(im_gray, thresh, 255, cv.THRESH_BINARY)[1]
+    		mapaPB = im_bw
+    		self.rota = bae.busca(mapaPB,1,[0,0],[450,450])
+    		coord = []
+    		for linha in self.rota:
+    			for x in range(20):
+    				try:
+    					coord.append([linha.index(x),self.rota.index(linha)])
+    				except:
+    					pass
+    		for item in coord:
+    			self.Canvas1.create_oval(item[0],item[1],item[0]+4,item[1]+4,outline="#8ccef3",width=1,fill="#8ccef3")
+    		a = open('rota.txt','w')
+    		a.write(coord)
+    		a.close()
+    	except Exception as e:
+	    	print(e)
 
 if __name__ == '__main__':
     vp_start_gui()
